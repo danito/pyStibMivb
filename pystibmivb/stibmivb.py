@@ -36,13 +36,10 @@ class iStibmivb:
       def do_request(self, method, args=None):
           if method in methods:
               url = base_url.format(method)
-              print (url)
               params = {}
               if args:
-                  print(args)
                   params = args
               try:
-                  print (params)
                   response = session.get(url, params = params, headers = headers)
                   try:
                       xml_data = response.content
@@ -64,9 +61,7 @@ class iStibmivb:
           """Retrieve a list of stops near a waypoint"""
           print("latitude", latitude)
           if latitude is not None and  longitude is not None:
-              print("longitude ", longitude)
               extra_params = {'latitude': latitude, 'longitude':longitude}
-              print (extra_params)
               xml_data = self.do_request('getclosestops', extra_params)
               return xml_data
 
