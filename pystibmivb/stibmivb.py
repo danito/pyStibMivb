@@ -1,5 +1,4 @@
 import requests
-import xmltodict
 
 session = requests.Session()
 
