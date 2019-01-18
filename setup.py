@@ -1,19 +1,14 @@
 from setuptools import setup, find_packages
 import os
 
-if os.environ.get('CI_COMMIT_TAG'):
-    version = os.environ['CI_COMMIT_TAG']
-else:
-    version = os.environ['CI_JOB_ID']
-
 with open("README.md", "r") as f:
     long_description = f.read()
 
 setup(
     name="pystibmivb",
-    version=version,
+    version="0.1.0",
     author="Daniel Nix",
-    author_email="me@nixis.me",
+    author_email="daniel.nix@gmail.com",
     description="A Python wrapper for the Stib-Mivb API",
     long_description=long_description,
     long_description_content_type="text/markdown",
