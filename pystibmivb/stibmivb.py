@@ -16,22 +16,8 @@ headers = {'user-agent': 'pyStibmivb (daniel.nix@gmail.com)'}
     
 class iStibmivb:
 
-      def __init__(self, format=None):
-          if format is None:
-              format = "xml"
-          self.format = format
-          
-      @property
-      def format(self):
-          return self.__format
-
-      @format.setter
-      def format(self, value):
-          if value in ['xml', 'json']:
-              self.__format = value
-          else:
-              self.__format = 'json'
-
+      def __init__(self):
+            
       def do_request(self, method, args=None):
           if method in methods:
               url = base_url.format(method)
