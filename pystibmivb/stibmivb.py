@@ -2,7 +2,11 @@ import requests
 
 session = requests.Session()
 
-base_url = "http://m.{}.be/api/{}.php"
+base_url = { 
+        'fr':"http://m.stib.be/api/{}.php",
+        'nl':"http://m.mivb.be/api/{}.php"
+        }
+
 
 methods = {
     'getitinerary' : ['line', 'iti'],
@@ -16,29 +20,16 @@ headers = {'user-agent': 'pyStibmivb (daniel.nix@gmail.com)'}
     
 class iStibmivb:
       
-      def __init_(self, lang=None):
-          if lang is None:
-              lang = 'fr'
-              api_url = 'stib'
-          self.lang = lang
-          self.api_url = api_url
-
-      @property
-      def lang(self):
-          return self.lang
-
-      @lang.setter
-      def lang(self, value):
-          if value is 'nl':
-              self.__lang = value
-              self.__api_url = 'mivb'
+      def __init__(self, lang=None):
+          if lang in ['fr','nl']:
+              self.lang = lang
           else:
-              self.__lang = 'fr'
-              self.__api_url = "stib"
+              self.lang = 'fr'
 
       def do_request(self, method, args=None):
+
           if method in methods:
-              url = base_url.format(self.api_url, method)
+              url = base_url[self.lang].format(method)
               params = {}
               if args:
                   params = args
@@ -62,7 +53,6 @@ class iStibmivb:
 
       def get_close_stops (self, latitude=None, longitude=None):
           """Retrieve a list of stops near a waypoint"""
-          print("latitude", latitude)
           if latitude is not None and longitude is not None:
               extra_params = {'latitude': latitude, 'longitude':longitude}
               xml_data = self.do_request('getclosestops', extra_params)
