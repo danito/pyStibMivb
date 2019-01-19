@@ -2,7 +2,7 @@ import requests
 
 session = requests.Session()
 
-base_url = "http://m.stib.be/api/{}.php"
+base_url = "http://m.{}.be/api/{}.php"
 
 methods = {
     'getitinerary' : ['line', 'iti'],
@@ -15,12 +15,30 @@ headers = {'user-agent': 'pyStibmivb (daniel.nix@gmail.com)'}
 
     
 class iStibmivb:
+      
+      def __init_(self, lang=None):
+          if lang is None:
+              lang = 'fr'
+              api_url = 'stib'
+          self.lang = lang
+          self.api_url = api_url
 
-      def __init__(self):
-            
+      @property
+      def lang(self):
+          return self.lang
+
+      @lang.setter
+      def lang(self, value):
+          if value is 'nl':
+              self.__lang = value
+              self.__api_url = 'mivb'
+          else:
+              self.__lang = 'fr'
+              self.__api_url = "stib"
+
       def do_request(self, method, args=None):
           if method in methods:
-              url = base_url.format(method)
+              url = base_url.format(self.api_url, method)
               params = {}
               if args:
                   params = args
@@ -45,7 +63,7 @@ class iStibmivb:
       def get_close_stops (self, latitude=None, longitude=None):
           """Retrieve a list of stops near a waypoint"""
           print("latitude", latitude)
-          if latitude is not None and  longitude is not None:
+          if latitude is not None and longitude is not None:
               extra_params = {'latitude': latitude, 'longitude':longitude}
               xml_data = self.do_request('getclosestops', extra_params)
               return xml_data
@@ -55,8 +73,8 @@ class iStibmivb:
           xml_data = self.do_request('getlinesnew')
           return xml_data
 
-      def get_waiting_times(self, line=None, iti=None, halt=None):
-          if bool(line) ^ bool(halt):
+      def get_waiting_times(self, line=None, iti=1, halt=None):
+          if None not in (line, halt):
               extra_params = {'line': line, 'iti': iti, 'halt': halt}
               xml_data = self.do_request('getwaitingtimes', extra_params)
               return xml_data
