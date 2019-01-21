@@ -18,7 +18,7 @@ methods = {
 headers = {'user-agent': 'pyStibmivb (daniel.nix@gmail.com)'}
 
     
-class iStibmivb:
+class Stibmivb:
       
       def __init__(self, lang=None):
           if lang in ['fr','nl']:
@@ -64,12 +64,14 @@ class iStibmivb:
           return xml_data
 
       def get_waiting_times(self, line=None, iti=1, halt=None):
+          '''Retrieve waiting times for a line at a stop id'''
           if None not in (line, halt):
               extra_params = {'line': line, 'iti': iti, 'halt': halt}
               xml_data = self.do_request('getwaitingtimes', extra_params)
               return xml_data
 
       def get_itinerary(self, line=None, iti=1):
+          '''Retrieve all stops for a line for a given direction (1 or 2)'''
           if line:
               extra_params = {'line':line, 'iti':iti}
               xml_data = self.do_request('getitinerary', extra_params)
