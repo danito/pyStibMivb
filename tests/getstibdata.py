@@ -1,15 +1,84 @@
-from pystibmivb import iStibmivb
+from pystibmivb import Stibmivb
 import xmltodict
 from collections import OrderedDict 
 
-latitude = '50.809655'
-longitude = '4.320166'
+latitude = '50.82141'
+longitude = '4.34187'
 lang = 'fr'
 
-stib = iStibmivb(lang)
+stib = Stibmivb(lang)
 stibdata = {}
 
 
+def get_waiting_times(line,iti,halt):
+    waiting_times_xml = stib.get_waiting_times(line,iti,halt)
+    waiting_times = xmltodict.parse(waiting_times_xml)
+    w = waiting_times['waitingtimes']
+    wt_data = {
+            "wt_stope_name": w['stopname'],
+            'wt_position_lat':w['position']['latitude'],
+            'wt_position_long':w['position']['latitude']
+            }
+    if 'message' in w:
+        wt_data['message']=(w['message'])
+    '''Let's check that there are results for this schedule'''
+    if 'waitingtime' in waiting_times['waitingtimes']:
+        wt =(waiting_times['waitingtimes']['waitingtime'])
+        wtd = []
+        for w in wt:
+            if w['line'] == line:
+                waitingtime = {
+                        'wt_waitingtime_line' : w['line'],
+                        'wt_waitingtime_mode' : w['mode'],
+                        'wt_waitingtime_minutes' : w['minutes'],
+                        'wt_waitingtime_destination' : w['destination'],
+                        }
+                wtd.append(waitingtime)
+        wt_data['wt_waitingtimes'] = wtd
+    return wt_data
+
+
+'''http://m.stib.be/api/getclosestops.php?latitude=50.82141&longitude=4.34187'''
+def get_waiting_times_by_location(latitude, longitude):
+    location_data = {}
+    stib_data = stib.get_close_stops(latitude,longitude)
+    halts = xmltodict.parse(stib_data)
+    location_data['halts'] = []
+    for halt in halts['halts']['halt']:
+        stop_id = halt['id']
+        halt_data = {
+            'halt_name': halt['name'],
+            'halt_id': halt['id'],
+            'halt_lat':halt['latitude'],
+            'halt_lon': halt['longitude'],
+            'halt_destinations':[]
+            }
+        destinations = halt['destinations']['destination']
+        d = []
+        halt_destinations = []
+        if type(destinations) is OrderedDict:
+            '''if only one stop, result is OD'''
+            d.append(destinations)
+            destinations = d 
+        dl = []
+        for destination in destinations:
+            dest_mode = destination['mode']
+            dest_line = destination['line']
+            dest_code = destination['destcode']
+            dest_name = destination['name']
+            halt_destination = {
+                'dest_mode' : destination['mode'],
+                'dest_line' : destination['line'],
+                'dest_code' : destination['destcode'],
+                'dest_name' : destination['name']
+                }
+            waiting_times_data = get_waiting_times(dest_line, dest_code, stop_id)
+            halt_destinations.append(waiting_times_data)
+            halt_data['halt_destinations'].append(halt_destinations)
+        location_data['halts'].append(halt_data)
+    return location_data
+                      
+'''
 mystops = stib.get_close_stops(latitude,longitude)
 stops = xmltodict.parse(mystops)
 
@@ -40,7 +109,7 @@ for halt in stops['halts']['halt']:
                       print("    ",w['minutes'], w['destination'])
           
     print ("================================")
-    
+'''    
 def get_default_line(line,iti):
     newlines = stib.get_lines_new()
     newlines = xmltodict.parse(newlines)
@@ -53,7 +122,7 @@ def get_default_line(line,iti):
             destination = l[d] 
     return destination
         
-
+'''
 stop_id = 2957
 iti = 1 
 line = 54
@@ -69,3 +138,6 @@ if 'waitingtime' in waiting_times['waitingtimes']:
         print("    ",w['minutes'], w['destination'])
 
 
+'''
+get_data = get_waiting_times_by_location(latitude, longitude)
+print(get_data)
