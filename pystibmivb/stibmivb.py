@@ -1,4 +1,6 @@
 import requests
+import xmltodict
+
 
 session = requests.Session()
 
@@ -20,11 +22,36 @@ headers = {'user-agent': 'pyStibmivb (daniel.nix@gmail.com)'}
     
 class Stibmivb:
       
-      def __init__(self, lang=None):
-          if lang in ['fr','nl']:
-              self.lang = lang
+      def __init__(self, lang=None, format=None):
+          if format is None:
+              format = 'json'
+          self.format = format               
+          if lang is None:
+              lang = 'fr'
+          self.lang = lang
+
+      @property
+      def format(self):
+          return self.__format
+
+      @format.setter
+      def format(self, value):
+          if value in ['json', 'xml']:
+              self.__format = value
           else:
-              self.lang = 'fr'
+              self.__format = 'json'
+
+      @property
+      def lang(self):
+          return self.__lang
+
+      @lang.setter
+      def lang(self, value):
+          if value in ['fr', 'nl']:
+              self.__lang = value
+          else:
+              self.__lang = 'fr'  
+
 
       def do_request(self, method, args=None):
 
@@ -65,14 +92,14 @@ class Stibmivb:
 
       def get_waiting_times(self, line=None, iti=1, halt=None):
           '''Retrieve waiting times for a line at a stop id'''
-          if None not in (line, halt):
+          if None not in (line, halt) and iti in [1,2]:
               extra_params = {'line': line, 'iti': iti, 'halt': halt}
               xml_data = self.do_request('getwaitingtimes', extra_params)
               return xml_data
 
       def get_itinerary(self, line=None, iti=1):
           '''Retrieve all stops for a line for a given direction (1 or 2)'''
-          if line:
+          if line and iti in [1,2]:
               extra_params = {'line':line, 'iti':iti}
               xml_data = self.do_request('getitinerary', extra_params)
               return xml_data

@@ -1,6 +1,6 @@
+from collections import OrderedDict 
 from pystibmivb import Stibmivb
 import xmltodict
-from collections import OrderedDict 
 
 latitude = '50.82141'
 longitude = '4.34187'
@@ -55,17 +55,13 @@ def get_waiting_times_by_location(latitude, longitude):
             }
         destinations = halt['destinations']['destination']
         d = []
-        halt_destinations = []
         if type(destinations) is OrderedDict:
             '''if only one stop, result is OD'''
             d.append(destinations)
             destinations = d 
-        dl = []
         for destination in destinations:
-            dest_mode = destination['mode']
             dest_line = destination['line']
             dest_code = destination['destcode']
-            dest_name = destination['name']
             halt_destination = {
                 'dest_mode' : destination['mode'],
                 'dest_line' : destination['line'],
@@ -73,8 +69,8 @@ def get_waiting_times_by_location(latitude, longitude):
                 'dest_name' : destination['name']
                 }
             waiting_times_data = get_waiting_times(dest_line, dest_code, stop_id)
-            halt_destinations.append(waiting_times_data)
-            halt_data['halt_destinations'].append(halt_destinations)
+            halt_destination['dest_waiting_times'] = waiting_times_data
+            halt_data['halt_destinations'].append(halt_destination)
         location_data['halts'].append(halt_data)
     return location_data
                       
