@@ -105,7 +105,7 @@ class Stibmivb:
           if line and iti in [1,2]:
               extra_params = {'line':line, 'iti':iti}
               response_data = self.do_request('getitinerary', extra_params)
-              return xml_data
+              return response_data
 
       def get_json(self, json_data):
           '''transform xml to dict to json'''
