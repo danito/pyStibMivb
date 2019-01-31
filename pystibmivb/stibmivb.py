@@ -66,7 +66,6 @@ class Stibmivb:
                   try:
                       response_data = response.content
                       if self.format is 'json':
-                          print('format : json')
                           response_data = self.get_json(response_data)
                       return response_data
                   except ValueError:
@@ -113,9 +112,6 @@ class Stibmivb:
           try:
               json_data = xmltodict.parse(json_data)
           except xmltodict.expat.ExpatError:
-              print("ERROR")
-              print(json_data)
               return -1
           json_data = json.dumps(json_data, ensure_ascii=False)
-          print(json_data)
           return json_data
