@@ -2,7 +2,7 @@ import requests
 import xmltodict
 import json
 
-#version 0.2.4
+#version 0.2.4.1
 session = requests.Session()
 
 base_url = { 

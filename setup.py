@@ -6,7 +6,7 @@ with open("README.md", "r") as f:
 
 setup(
     name="pystibmivb",
-    version="0.2.4",
+    version="0.2.4.1",
     author="Daniel Nix",
     author_email="daniel.nix@gmail.com",
     description="A Python wrapper for the Stib-Mivb API",
