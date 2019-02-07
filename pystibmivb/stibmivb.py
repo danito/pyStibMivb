@@ -2,7 +2,7 @@ import requests
 import xmltodict
 import json
 
-#version 0.2.4.1
+#version 0.2.4.2
 session = requests.Session()
 
 base_url = { 
@@ -14,7 +14,7 @@ base_url = {
 methods = {
     'getitinerary' : ['line', 'iti'],
     'getlinesnew' : [],
-    'getwaitingtimes' : ['line','iti','halt'],
+    'getwaitingtimes' : ['halt'],
     'getclosestops' : ['latitude','longitude']
     }
 
@@ -55,6 +55,7 @@ class Stibmivb:
 
 
       def do_request(self, method, args=None):
+          '''Get data from api endpoint'''
 
           if method in methods:
               url = base_url[self.lang].format(method)
@@ -93,10 +94,10 @@ class Stibmivb:
           response_data = self.do_request('getlinesnew')
           return response_data
 
-      def get_waiting_times(self, line=None, iti=1, halt=None):
+      def get_waiting_times(self, halt=None):
           '''Retrieve waiting times for a line at a stop id'''
-          if None not in (line, halt) and iti in [1,2]:
-              extra_params = {'line': line, 'iti': iti, 'halt': halt}
+          if halt is not None:
+              extra_params = {'halt': halt}
               response_data = self.do_request('getwaitingtimes', extra_params)
               return response_data
 
@@ -115,3 +116,34 @@ class Stibmivb:
               return -1
           json_data = json.dumps(json_data, ensure_ascii=False)
           return json_data
+
+      def get_waiting_times_line(self, halt=None,line=None):
+          '''Get waiting times for particular line for a halt id'''
+          if None not in [halt,line]:
+              waiting_times = []
+              halt_data = self.get_waiting_times(halt)
+              halt_data = json.loads(halt_data)
+              if 'waitingtime' in halt_data['waitingtimes']:
+                  wts = halt_data['waitingtimes']['waitingtime']
+                  if type(wts) is dict:
+                      wts = [wts]
+                  for w in wts:
+                      if w['line'] == line:
+                          waiting_times.append(w)
+                  waiting_times = self.get_json(waiting_times)
+              else:
+                  waiting_times = None
+          return waiting_times        
+
+      def get_line_name(self,line):
+          '''Get destinations for a line'''
+          if line:
+              line_name = []
+              lines = self.get_lines_new()
+              lines = json.loads(lines)
+              for l in lines['lines']:
+                  if l['id'] == line:
+                      line_name.append(l)
+              line_name = self.get_json(line_name)
+              return line_name
+                          
