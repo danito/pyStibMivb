@@ -130,7 +130,6 @@ class Stibmivb:
                   for w in wts:
                       if w['line'] == line:
                           waiting_times.append(w)
-                  waiting_times = self.get_json(waiting_times)
               else:
                   waiting_times = None
           return waiting_times        
@@ -141,9 +140,20 @@ class Stibmivb:
               line_name = []
               lines = self.get_lines_new()
               lines = json.loads(lines)
-              for l in lines['lines']:
+              for l in lines['lines']['line']:
                   if l['id'] == line:
                       line_name.append(l)
-              line_name = self.get_json(line_name)
               return line_name
                           
+      def get_halt_ids_latlon(self, lat=None, lon=None):
+          if None not in [lat,lon]:
+              halt_ids = []
+              halts = self.get_close_stops(lat,lon)
+              halts =json.loads(halts)
+              if 'halt' in halts['halts']:
+                for halt in halts['halts']['halt']:
+                    halt_ids.append(halt['id'])
+              return halt_ids
+
+
+      

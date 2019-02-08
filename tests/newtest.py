@@ -11,9 +11,18 @@ line = '54'
 iti = 1
 halt = 2955
 
-i = stib.get_waiting_times('5152')
+i = stib.get_waiting_times('2952')
 print(i)
 
-a = stib.get_waiting_times_line('5152','54')
+a = stib.get_waiting_times_line('2952','54')
+print("_______________________")
+print(a[0])
 
-print(a)
+print("_______________________")
+c = stib.get_line_name('54')
+
+print(c)
+
+h = stib.get_halt_ids_latlon(lat, lon)
+
+print(h)
