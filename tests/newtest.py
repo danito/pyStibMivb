@@ -16,13 +16,25 @@ print(i)
 
 a = stib.get_waiting_times_line('2952','54')
 print("_______________________")
-print(a[0])
+if a:
+    print(a)
+else:
+    print("N/A")
+
 
 print("_______________________")
 c = stib.get_line_name('54')
 
 print(c)
+print("_______________________")
 
 h = stib.get_halt_ids_latlon(lat, lon)
 
 print(h)
+
+print("_______________________")
+
+for halt in h:
+     halt = list(halt.keys())
+     for k in halt:
+         print (k)

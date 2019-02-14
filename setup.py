@@ -16,9 +16,9 @@ setup(
     install_requires=['requests>=2.0','xmltodict>=0.11.0'],
     python_requires='>=3',
     packages=find_packages(),
-    classifiers=(
+    classifiers=[
         "Programming Language :: Python :: 3",
         "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
         "Operating System :: OS Independent",
-    ),
+    ],
 )
